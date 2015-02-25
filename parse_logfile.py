@@ -1,8 +1,3 @@
-IPV4 = 1
-IPV6 = 2
-DOWN = 3
-UP = 4
-
 from sys import stdin
 from re import search
 
