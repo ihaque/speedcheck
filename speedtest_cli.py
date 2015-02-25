@@ -342,24 +342,22 @@ def closestServers(client, all=False):
     distance
     """
 
-    uh = urlopen('http://www.speedtest.net/speedtest-servers-static.php')
-    serversxml = []
-    while 1:
-        serversxml.append(uh.read(10240))
-        if len(serversxml[-1]) == 0:
-            break
-    if int(uh.code) != 200:
+    import requests
+    req = requests.get('http://www.speedtest.net/speedtest-servers-static.php')
+    print req.encoding
+    if req.status_code != 200:
         return None
-    uh.close()
+    serversxml = req.text
     try:
         try:
-            root = ET.fromstring(''.encode().join(serversxml))
+            root = ET.fromstring(serversxml.encode('utf-8'))
             elements = root.getiterator('server')
         except AttributeError:
-            root = DOM.parseString(''.join(serversxml))
+            root = DOM.parseString(serversxml)
             elements = root.getElementsByTagName('server')
     except SyntaxError:
         print_('Failed to parse list of speedtest.net servers')
+        print_(serversxml)
         sys.exit(1)
     servers = {}
     for server in elements:
